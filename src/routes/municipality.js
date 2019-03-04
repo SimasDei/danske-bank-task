@@ -7,23 +7,40 @@ const Municipality = require('../models/Municipality');
 
 /**
  * @route - GET
- * Get all municipalities and rates
- * @query city - handle potential queries
+ * @param {city,date} - send response based on query city
+ * and date selected
  */
 router.get('/municipalities', (req, res) => {
-  if (req.query.city) {
-    Municipality.findOne({
-      city: req.query.city
+  if (!req.query.city && !req.query.date) {
+    // If none specified, return all data
+    Municipality.find({}, (error, municipalities) => {
+      res.json(municipalities);
     });
-    res.send(`City requested: ${req.query.city}`);
+  } else {
+    // Destruct request, split date into an Array
+    const { city, date } = req.query;
+    const splitArray = date.split('-');
+    const dateArray = splitArray.map(el => parseInt(el));
+    Municipality.findOne({ city: city }, (error, municipality) => {
+      let tax;
+      if (
+        (dateArray[1] === 12 && dateArray[2] === 25) ||
+        (dateArray[1] === 1 && dateArray[2] === 1)
+      ) {
+        tax = municipality.daily;
+      } else if (dateArray[1] === 5) {
+        tax = municipality.monthly;
+      } else {
+        tax = municipality.yearly;
+      }
+      res.status(200).json({
+        year: dateArray[0],
+        month: dateArray[1],
+        day: dateArray[2],
+        tax: tax
+      });
+    });
   }
-
-  Municipality.find({}, (error, municipalities) => {
-    if (error) {
-      console.log(error);
-    }
-    res.json(municipalities);
-  });
 });
 
 /**
