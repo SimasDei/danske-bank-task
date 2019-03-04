@@ -17,10 +17,29 @@ const db = mongoose
   .then(console.log('Connected to DB'));
 
 /**
+ * @model - Municipality
+ * import mongoose model
+ */
+const Municipality = require('./models/Municipality');
+
+/**
  * @route -  GET
  * default home page
  */
 app.get('/', (req, res) => res.send('Ahoy Sailor o/'));
+
+/**
+ * @route - GET
+ * Get all municipalities and rates
+ */
+app.get('/municipalities', (req, res) => {
+  Municipality.find({}, (error, municipalities) => {
+    if (error) {
+      console.log(error);
+    }
+    res.json(municipalities);
+  });
+});
 
 app.listen(1337);
 console.log('Connection established, Captain o/');
