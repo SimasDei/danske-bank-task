@@ -6,6 +6,9 @@ const mongoose = require('mongoose');
 const dbConfig = require('./config');
 const municipalitiesRoute = require('./routes/municipality');
 
+// Use body-parser to parse requests into JSON
+app.use(bodyParser.json());
+
 /**
  * @module mongoose = Connect to MongoDB Atlas
  */
