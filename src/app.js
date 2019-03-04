@@ -3,6 +3,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const dbConfig = require('./config');
+const municipalitiesRoute = require('./routes/municipality');
 
 /**
  * @method mongoose = Connect to MongoDB Atlas
@@ -17,29 +18,13 @@ const db = mongoose
   .then(console.log('Connected to DB'));
 
 /**
- * @model - Municipality
- * import mongoose model
+ * @routes
  */
-const Municipality = require('./models/Municipality');
+app.use(municipalitiesRoute);
 
 /**
- * @route -  GET
- * default home page
+ * @method use,listen - Setup server Configuration
  */
-app.get('/', (req, res) => res.send('Ahoy Sailor o/'));
-
-/**
- * @route - GET
- * Get all municipalities and rates
- */
-app.get('/municipalities', (req, res) => {
-  Municipality.find({}, (error, municipalities) => {
-    if (error) {
-      console.log(error);
-    }
-    res.json(municipalities);
-  });
-});
-
-app.listen(1337);
-console.log('Connection established, Captain o/');
+app.use(express.static('public'));
+const PORT = process.env.PORT || 1337;
+app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
